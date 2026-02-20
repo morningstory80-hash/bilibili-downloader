@@ -3,11 +3,14 @@ from flask_cors import CORS
 import yt_dlp
 
 app = Flask(__name__)
-CORS(app) # যাতে আপনার ওয়েবসাইট থেকে রিকোয়েস্ট পাঠালে ব্লক না হয়
+CORS(app)
+
+@app.route('/')
+def home():
+    return "Server is running perfectly!"
 
 @app.route('/get-video', methods=['GET', 'POST'])
 def get_video():
-    # রিকোয়েস্ট থেকে লিংক নেওয়া
     if request.method == 'POST':
         url = request.json.get('url')
     else:
@@ -16,7 +19,6 @@ def get_video():
     if not url:
         return jsonify({"error": "দয়া করে একটি Bilibili লিংক দিন"}), 400
     
-    # yt-dlp এর সেটিং (শুধুমাত্র লিংক বের করবে, ডাউনলোড করবে না)
     ydl_opts = {
         'format': 'best',
         'quiet': True,
@@ -27,7 +29,6 @@ def get_video():
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             
-            # ভিডিওর আসল লিংক এবং টাইটেল বের করা
             video_url = info.get('url')
             title = info.get('title')
             description = info.get('description', '')
@@ -43,4 +44,4 @@ def get_video():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
-  
+    
