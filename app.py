@@ -19,8 +19,8 @@ def get_video():
     if not url:
         return jsonify({"error": "দয়া করে একটি Bilibili লিংক দিন"}), 400
     
+    # Bilibili এর জন্য আপডেট করা সেটিং
     ydl_opts = {
-        'format': 'best',
         'quiet': True,
         'no_warnings': True,
     }
@@ -29,8 +29,13 @@ def get_video():
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             
+            # স্মার্ট লিংক এক্সট্রাকশন
             video_url = info.get('url')
-            title = info.get('title')
+            if not video_url and 'requested_formats' in info:
+                # ভিডিও এবং অডিও আলাদা থাকলে প্রথম লিংকটা নেবে
+                video_url = info['requested_formats'][0].get('url')
+                
+            title = info.get('title', 'No Title Found')
             description = info.get('description', '')
             
             return jsonify({
