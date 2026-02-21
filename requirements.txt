@@ -1,7 +1,8 @@
 Flask
 gunicorn
 yt-dlp
-moviepy
+imageio-ffmpeg
+ffmpeg-python
 google-generativeai
 google-auth-oauthlib
 google-auth-httplib2
